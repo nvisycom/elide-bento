@@ -370,7 +370,7 @@ dependencies = [
 [[package]]
 name = "elide-core"
 version = "0.1.0"
-source = "git+https://github.com/nvisycom/elide?branch=main#073042c3c48554a6a8968cb7423d83bda0044189"
+source = "git+https://github.com/nvisycom/elide?branch=main#c9d88476138fcdbccb59c9dfe070323ed36e2081"
 dependencies = [
  "async-trait",
  "blake3",
@@ -389,7 +389,7 @@ dependencies = [
 [[package]]
 name = "elide-ner"
 version = "0.1.0"
-source = "git+https://github.com/nvisycom/elide?branch=main#073042c3c48554a6a8968cb7423d83bda0044189"
+source = "git+https://github.com/nvisycom/elide?branch=main#c9d88476138fcdbccb59c9dfe070323ed36e2081"
 dependencies = [
  "async-trait",
  "derive_builder",
@@ -402,7 +402,7 @@ dependencies = [
 [[package]]
 name = "elide-ocr"
 version = "0.1.0"
-source = "git+https://github.com/nvisycom/elide?branch=main#073042c3c48554a6a8968cb7423d83bda0044189"
+source = "git+https://github.com/nvisycom/elide?branch=main#c9d88476138fcdbccb59c9dfe070323ed36e2081"
 dependencies = [
  "async-trait",
  "derive_builder",
@@ -414,7 +414,7 @@ dependencies = [
 [[package]]
 name = "elide-stt"
 version = "0.1.0"
-source = "git+https://github.com/nvisycom/elide?branch=main#073042c3c48554a6a8968cb7423d83bda0044189"
+source = "git+https://github.com/nvisycom/elide?branch=main#c9d88476138fcdbccb59c9dfe070323ed36e2081"
 dependencies = [
  "async-trait",
  "derive_builder",
