@@ -25,6 +25,7 @@ SERVICES = {
     "elide-bento-ocr": ROOT / "packages" / "elide-bento-ocr" / "requirements.txt",
     "elide-bento-vl": ROOT / "packages" / "elide-bento-vl" / "requirements.txt",
     "elide-bento-ner": ROOT / "packages" / "elide-bento-ner" / "requirements.txt",
+    "elide-bento-stt": ROOT / "packages" / "elide-bento-stt" / "requirements.txt",
 }
 
 

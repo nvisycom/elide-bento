@@ -13,6 +13,9 @@ printf "[%s] [MAKE] [$(MAKECMDGOALS)] $(1)\n" "$$(date '+%Y-%m-%d %H:%M:%S')"
 endef
 
 # Python services, keyed by package suffix (packages/elide-bento-<suffix>).
+# `stt` is intentionally absent: its whisperx dependency cannot resolve
+# alongside elide-bento-ner yet (see packages/elide-bento-stt/README.md), so
+# `build`/`build-image` would fail on it. Add it here once that is resolved.
 SERVICES := ocr vl ner
 
 
@@ -70,6 +73,11 @@ serve-vl: ## Python: serve the vision-language OCR (PaddleOCR-VL) service locall
 serve-ner: ## Python: serve the NER (GLiNER) service locally with reload.
 	@$(call log,Serving elide-bento-ner...)
 	@uv run bentoml serve elide_bento_ner.service:NerService --reload
+
+.PHONY: serve-stt
+serve-stt: ## Python: serve the STT (WhisperX) service locally with reload.
+	@$(call log,Serving elide-bento-stt...)
+	@uv run bentoml serve elide_bento_stt.service:SttService --reload
 
 .PHONY: build
 build: ## Python: build all Bentos from their bentofiles.
