@@ -52,7 +52,7 @@ jobs:
           persist-credentials: false
 
       - name: Install cargo-binstall
-        uses: cargo-bins/cargo-binstall@v1.21.1
+        uses: cargo-bins/cargo-binstall@v1.22.0
 
       - name: Install cargo-deny
         run: cargo binstall cargo-deny@0.20.2 --no-confirm --no-symlinks
