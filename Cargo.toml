@@ -4,6 +4,7 @@
 resolver = "3"
 members = [
     "./crates/elide-bentoml",
+    "./crates/elide-gladia",
 ]
 # Python (uv) workspace lives in `packages/`. Excluded so cargo
 # doesn't glob-scan it or complain about missing Cargo.toml files.
@@ -54,3 +55,6 @@ async-trait = { version = "0.1", features = [] }
 
 # AI / LLM frameworks
 bentoml = { version = "0.5", default-features = false, features = ["rustls-tls", "tracing"] }
+
+# Speech-to-text providers without a BentoML service in front of them.
+gladia = { version = "0.1", default-features = false, features = ["rustls-tls"] }
