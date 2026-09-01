@@ -22,7 +22,7 @@ Import a specific version explicitly:
 
 The wire is camelCase, mirroring the Rust side's serde
 `rename_all = "camelCase"`. These pydantic models are the source of truth
-for the wire contract; the Rust [`elide-bento`](../../crates/elide-bento)
+for the wire contract; the Rust [`elide-bentoml`](../../crates/elide-bentoml)
 client mirrors them by hand.
 
 ## License

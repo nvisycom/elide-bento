@@ -32,7 +32,10 @@ def test_response_serializes_camelcase():
         language="en",
         duration_ms=2400,
     )
-    dumped = resp.model_dump(by_alias=True, mode="json")
+    # No `by_alias=True`: that would override the model's own
+    # `serialize_by_alias`, so the test would pass even if the config were
+    # wrong. The wire form has to come from the config alone.
+    dumped = resp.model_dump(mode="json")
     assert dumped["segments"][0]["startMs"] == 0
     assert dumped["segments"][0]["speakerId"] == "SPEAKER_00"
     assert dumped["segments"][0]["words"][0]["endMs"] == 480

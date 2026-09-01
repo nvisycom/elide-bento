@@ -90,7 +90,12 @@ class SttService:
     @bentoml.api
     def transcribe(self, request: SttRequest, ctx: bentoml.Context) -> SttResponse:
         rid = request_id(ctx)
-        audio = _decode_audio(request.audio)
+        limit = self.engine.max_duration_seconds
+        # Decode is bounded by the limit rather than checked after it: a long
+        # compressed input would otherwise be fully decoded and resampled into
+        # memory before being rejected. One extra second is decoded so an
+        # over-length clip is still detectable as over-length.
+        audio = _decode_audio(request.audio, max_seconds=limit + 1)
 
         try:
             seconds = self.engine.check_duration(audio)
@@ -110,12 +115,17 @@ class SttService:
             raise InternalServerError("STT inference failed") from exc
 
 
-def _decode_audio(audio_b64: str):
+def _decode_audio(audio_b64: str, max_seconds: float | None = None):
     """Base64 audio bytes to a mono 16 kHz float32 waveform.
 
     Decoding goes through ffmpeg (via ``soundfile``/``librosa``) so any
     container the deployment's ffmpeg understands is accepted. A payload that
     is not decodable audio is a 400, not a 500 — it is the caller's input.
+
+    ``max_seconds`` bounds the decode itself, so an over-long input costs the
+    worker one bounded read rather than a full decode and resample of however
+    much audio the caller sent. The compressed payload is capped first, since
+    even the decode's own buffer is the caller's to inflate.
     """
     try:
         raw = base64.b64decode(audio_b64, validate=True)
@@ -123,11 +133,21 @@ def _decode_audio(audio_b64: str):
         raise InvalidArgument("audio is not valid base64") from exc
     if not raw:
         raise InvalidArgument("audio is empty")
+    if max_seconds is not None:
+        # A generous ceiling on the compressed bytes: uncompressed 16-bit mono
+        # PCM at the target rate is the worst realistic case, so anything past
+        # it cannot be within the duration limit whatever the codec.
+        max_bytes = int(max_seconds * SAMPLE_RATE * 2)
+        if len(raw) > max_bytes:
+            raise InvalidArgument(
+                f"audio is {len(raw)} bytes; the limit is {max_bytes} "
+                f"({max_seconds:.0f}s of uncompressed audio)"
+            )
 
     import librosa
 
     try:
-        waveform, _ = librosa.load(io.BytesIO(raw), sr=SAMPLE_RATE, mono=True)
+        waveform, _ = librosa.load(io.BytesIO(raw), sr=SAMPLE_RATE, mono=True, duration=max_seconds)
     except Exception as exc:
         raise InvalidArgument("audio bytes are not decodable audio") from exc
     if waveform.size == 0:

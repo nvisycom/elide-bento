@@ -6,7 +6,7 @@ The contract is task-named and versioned:
 - :mod:`bento_core.ner` — NER request/response (entities with model-native
   labels; the consumer owns the taxonomy mapping).
 
-These mirror the Rust client (``elide-bento``) in this repo and the runtime's
+These mirror the Rust client (``elide-bentoml``) in this repo and the runtime's
 ``nvisy-schema`` (which owns the model-label → shared-taxonomy map);
 versioning is lockstep with the runtime.
 """

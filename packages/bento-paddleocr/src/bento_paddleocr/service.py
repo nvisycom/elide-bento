@@ -36,7 +36,7 @@ logger = get_logger("nvisy.vl")
 DEFAULT_MODEL = "PaddlePaddle/PaddleOCR-VL"
 
 batch_size_metric = Histogram(
-    "bento_doctrvl_batch_size",
+    "bento_paddleocr_batch_size",
     "Number of images merged into one recognize() call.",
     buckets=(1, 2, 4, 8),
 )

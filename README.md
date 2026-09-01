@@ -30,13 +30,6 @@ specific model behind it. Any HTTP service that reproduces the
 packages, including self-hosted or custom models and weights. Each
 package README documents its wire shape.
 
-> [!NOTE]
-> The Rust client's `stt` feature targets an `bento-whisper` service
-> that does not ship from this repository yet. The backend is
-> implemented against the `/transcribe` contract, so any service
-> reproducing it works today; there is just no bundled Python package
-> to run.
-
 ## Quick Start
 
 The fastest way to get started is with [Nvisy Cloud](https://nvisy.com).
