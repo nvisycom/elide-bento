@@ -90,6 +90,21 @@ if your deployment has a licence policy, check it before enabling.
 `speakerId` is the engine's own label (`SPEAKER_00`, …). It groups segments
 *within one transcript*; it is not a stable identity across calls.
 
+### Only point `ELIDE_BENTO_STT_DIARIZE_MODEL` at a repo you trust
+
+pyannote loads its pipeline with `weights_only=False` and imports a module
+name read out of the checkpoint itself, so **loading a checkpoint is running
+its author's code**. `lightning` carries a matching advisory
+([PYSEC-2026-3624](https://osv.dev/vulnerability/PYSEC-2026-3624)), fixed
+upstream but unreleased as of 2.6.5.
+
+In the default configuration this is not reachable from a request: the
+checkpoint loads once at startup from a fixed, gated Hugging Face repo, and
+the `/transcribe` handler only ever sees the caller's audio bytes and
+language hint — submitted audio never becomes a checkpoint. Repointing this
+variable at an untrusted repo is what would turn it into a code-execution
+path, so treat it as you would any other "run this binary" setting.
+
 ## Run locally
 
 ```bash
