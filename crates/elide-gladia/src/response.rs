@@ -64,10 +64,13 @@ pub(crate) fn decode(response: PreRecordedResponse) -> Result<SttResponse, Gladi
 /// An inverted span is dropped rather than clamped: it means the provider
 /// disagreed with itself, and inventing a span would hide that.
 fn segment(utterance: UtteranceDto) -> Option<TranscriptSegment> {
-    let (start_ms, end_ms) = (to_ms(utterance.start), to_ms(utterance.end));
-    if end_ms < start_ms {
+    // Checked in seconds, before rounding: 1.0004s -> 1.0003s is inverted,
+    // but both round to 1000ms, so a millisecond comparison would accept it
+    // as a zero-length span rather than dropping it.
+    if utterance.end < utterance.start {
         return None;
     }
+    let (start_ms, end_ms) = (to_ms(utterance.start), to_ms(utterance.end));
 
     let mut segment = TranscriptSegment::new(
         TimeSpan::from_millis(start_ms, end_ms),
@@ -90,11 +93,13 @@ fn segment(utterance: UtteranceDto) -> Option<TranscriptSegment> {
 
 /// One word, or `None` when its span or text is unusable.
 fn word(dto: WordDto) -> Option<TranscriptWord> {
-    let (start_ms, end_ms) = (to_ms(dto.start), to_ms(dto.end));
+    // Inversion is checked in seconds, before rounding, for the same reason
+    // as in `segment`.
     let text = dto.word.trim();
-    if end_ms < start_ms || text.is_empty() {
+    if dto.end < dto.start || text.is_empty() {
         return None;
     }
+    let (start_ms, end_ms) = (to_ms(dto.start), to_ms(dto.end));
     Some(
         TranscriptWord::new(TimeSpan::from_millis(start_ms, end_ms), text.to_owned())
             .with_confidence(Confidence::clamped(dto.confidence as f32)),
@@ -193,6 +198,39 @@ mod tests {
         let decoded = decode(response(&body)).unwrap();
         assert_eq!(decoded.segments.len(), 1);
         assert_eq!(decoded.segments[0].text, "good");
+    }
+
+    /// A sub-millisecond inversion is still an inversion.
+    ///
+    /// Regression: checking after rounding accepted 1.0004s -> 1.0003s as a
+    /// zero-length span, because both values round to 1000ms.
+    #[test]
+    fn drops_spans_inverted_below_millisecond_resolution() {
+        let body = done_body(
+            r#"{ "start": 1.0004, "end": 1.0003, "text": "inverted", "confidence": 0.9,
+                 "channel": 0, "language": "en",
+                 "words": [{ "word": "x", "start": 2.0004, "end": 2.0003,
+                             "confidence": 0.9 }] }"#,
+        );
+        assert!(decode(response(&body)).unwrap().segments.is_empty());
+    }
+
+    /// A word inverted below millisecond resolution is dropped, while its
+    /// segment survives.
+    #[test]
+    fn drops_words_inverted_below_millisecond_resolution() {
+        let body = done_body(
+            r#"{ "start": 0.0, "end": 2.0, "text": "x", "confidence": 0.9,
+                 "channel": 0, "language": "en",
+                 "words": [{ "word": "bad", "start": 1.0004, "end": 1.0003,
+                             "confidence": 0.9 },
+                           { "word": "good", "start": 0.0, "end": 0.5,
+                             "confidence": 0.9 }] }"#,
+        );
+        let decoded = decode(response(&body)).unwrap();
+        let words = &decoded.segments[0].words;
+        assert_eq!(words.len(), 1);
+        assert_eq!(words[0].text, "good");
     }
 
     /// A failed job surfaces as an error, not as an empty transcript.
