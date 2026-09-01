@@ -1,6 +1,6 @@
 # Documentation
 
-Reference documentation for the elide-bento inference services.
+Reference documentation for the elide-provider inference services.
 
 ## Contents
 

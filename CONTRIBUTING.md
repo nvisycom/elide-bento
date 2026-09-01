@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to elide-bento.
+Thank you for your interest in contributing to elide-provider.
 
 This repository is a polyglot workspace: Python [BentoML](https://bentoml.com)
 inference services under `packages/`, and a Rust client crate under `crates/`.
@@ -25,8 +25,8 @@ rustup toolchain install nightly --component rustfmt
 ## Setup
 
 ```bash
-git clone https://github.com/nvisycom/elide-bento.git
-cd elide-bento
+git clone https://github.com/nvisycom/elide-provider.git
+cd elide-provider
 
 make sync        # Python: install all workspace dependencies
 cargo build      # Rust: build the client crate

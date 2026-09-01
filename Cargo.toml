@@ -18,11 +18,11 @@ license = "Apache-2.0"
 publish = false
 
 authors = ["nvisy <contact@nvisy.com>"]
-repository = "https://github.com/nvisycom/elide-bento"
-homepage = "https://github.com/nvisycom/elide-bento"
+repository = "https://github.com/nvisycom/elide-provider"
+homepage = "https://github.com/nvisycom/elide-provider"
 # The crate is `publish = false`, so docs.rs never builds it; point at the
 # in-repo crate docs instead of a docs.rs URL that will always 404.
-documentation = "https://github.com/nvisycom/elide-bento/tree/main/crates/elide-bentoml"
+documentation = "https://github.com/nvisycom/elide-provider/tree/main/crates/elide-bentoml"
 
 [workspace.dependencies]
 # Default features are disabled for certain dependencies to allow
