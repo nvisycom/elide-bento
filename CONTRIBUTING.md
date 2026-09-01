@@ -80,11 +80,11 @@ change under `crates/` runs the Rust workflows. A change to both runs both.
 
 ```text
 crates/elide-bentoml/      Rust client for the services below
-packages/elide-bento-core/ Shared request/response contracts
-packages/elide-bento-ner/  Named-entity recognition (GLiNER)
-packages/elide-bento-ocr/  OCR (docTR)
-packages/elide-bento-vl/   Vision-language OCR (PaddleOCR-VL)
-packages/elide-bento-stt/  Speech-to-text (faster-whisper)
+packages/bento-core/       Shared request/response contracts
+packages/bento-gliner2/    Named-entity recognition (GLiNER2)
+packages/bento-doctr/      OCR (docTR)
+packages/bento-paddleocr/  Vision-language OCR (PaddleOCR-VL)
+packages/bento-whisper/    Speech-to-text (faster-whisper + pyannote)
 docs/design/               Per-service design notes
 scripts/                   Repository tooling
 ```

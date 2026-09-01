@@ -15,12 +15,12 @@ resolution-markers = [
 
 [manifest]
 members = [
+    "bento-core",
+    "bento-doctr",
+    "bento-gliner2",
+    "bento-paddleocr",
+    "bento-whisper",
     "elide-bento",
-    "elide-bento-core",
-    "elide-bento-ner",
-    "elide-bento-ocr",
-    "elide-bento-stt",
-    "elide-bento-vl",
 ]
 constraints = [
     { name = "aiohttp", specifier = ">=3.14.0" },
@@ -273,6 +273,123 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c3/b0/1c6a16426d389813b48d95e26898aff79abbde42ad353958ad95cc8c9b21/beautifulsoup4-4.14.3.tar.gz", hash = "sha256:6292b1c5186d356bba669ef9f7f051757099565ad9ada5dd630bd9de5fa7fb86", size = 627737, upload-time = "2025-11-30T15:08:26.084Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1a/39/47f9197bdd44df24d67ac8893641e16f386c984a0619ef2ee4c51fbbc019/beautifulsoup4-4.14.3-py3-none-any.whl", hash = "sha256:0918bfe44902e6ad8d57732ba310582e98da931428d231a5ecb9e7c703a735bb", size = 107721, upload-time = "2025-11-30T15:08:24.087Z" },
+]
+
+[[package]]
+name = "bento-core"
+version = "0.1.0"
+source = { editable = "packages/bento-core" }
+dependencies = [
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pydantic", specifier = ">=2.11,<3" }]
+
+[[package]]
+name = "bento-doctr"
+version = "0.1.0"
+source = { editable = "packages/bento-doctr" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "bento-core" },
+    { name = "bentoml" },
+    { name = "onnx" },
+    { name = "pillow" },
+    { name = "prometheus-client" },
+    { name = "python-doctr" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.14.3,<4" },
+    { name = "bento-core", editable = "packages/bento-core" },
+    { name = "bentoml", specifier = ">=1.4.39,<2" },
+    { name = "onnx", specifier = ">=1.22.0" },
+    { name = "pillow", specifier = ">=12.3.0,<13" },
+    { name = "prometheus-client", specifier = ">=0.26.0" },
+    { name = "python-doctr", specifier = ">=1.0,<2" },
+]
+
+[[package]]
+name = "bento-gliner2"
+version = "0.1.0"
+source = { editable = "packages/bento-gliner2" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "bento-core" },
+    { name = "bentoml" },
+    { name = "gliner2" },
+    { name = "prometheus-client" },
+    { name = "transformers" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.14.3,<4" },
+    { name = "bento-core", editable = "packages/bento-core" },
+    { name = "bentoml", specifier = ">=1.4.39,<2" },
+    { name = "gliner2", specifier = ">=1.3.2,<3" },
+    { name = "prometheus-client", specifier = ">=0.26.0" },
+    { name = "transformers", specifier = ">=5.15.0" },
+]
+
+[[package]]
+name = "bento-paddleocr"
+version = "0.1.0"
+source = { editable = "packages/bento-paddleocr" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "bento-core" },
+    { name = "bentoml" },
+    { name = "paddleocr" },
+    { name = "paddlepaddle" },
+    { name = "paddlex", extra = ["ocr"] },
+    { name = "pillow" },
+    { name = "prometheus-client" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.14.3,<4" },
+    { name = "bento-core", editable = "packages/bento-core" },
+    { name = "bentoml", specifier = ">=1.4.39,<2" },
+    { name = "paddleocr", specifier = ">=3.5,<4" },
+    { name = "paddlepaddle", specifier = ">=3.0,<4" },
+    { name = "paddlex", extras = ["ocr"], specifier = ">=3.7.2,<4" },
+    { name = "pillow", specifier = ">=12.3.0,<13" },
+    { name = "prometheus-client", specifier = ">=0.26.0" },
+]
+
+[[package]]
+name = "bento-whisper"
+version = "0.1.0"
+source = { editable = "packages/bento-whisper" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "bento-core" },
+    { name = "bentoml" },
+    { name = "faster-whisper" },
+    { name = "librosa" },
+    { name = "prometheus-client" },
+    { name = "pyannote-audio" },
+    { name = "torch" },
+    { name = "torchaudio" },
+    { name = "transformers" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.14.3,<4" },
+    { name = "bento-core", editable = "packages/bento-core" },
+    { name = "bentoml", specifier = ">=1.4.39,<2" },
+    { name = "faster-whisper", specifier = ">=1.2,<2" },
+    { name = "librosa", specifier = ">=0.11,<1" },
+    { name = "prometheus-client", specifier = ">=0.26.0" },
+    { name = "pyannote-audio", specifier = ">=4.0,<5" },
+    { name = "torch", specifier = ">=2.8" },
+    { name = "torchaudio", specifier = ">=2.8" },
+    { name = "transformers", specifier = ">=5.15.0" },
 ]
 
 [[package]]
@@ -666,123 +783,6 @@ dev = [
     { name = "httpx", specifier = ">=0.27" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "ruff", specifier = ">=0.16.3" },
-]
-
-[[package]]
-name = "elide-bento-core"
-version = "0.1.0"
-source = { editable = "packages/elide-bento-core" }
-dependencies = [
-    { name = "pydantic" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "pydantic", specifier = ">=2.11,<3" }]
-
-[[package]]
-name = "elide-bento-ner"
-version = "0.1.0"
-source = { editable = "packages/elide-bento-ner" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "bentoml" },
-    { name = "elide-bento-core" },
-    { name = "gliner2" },
-    { name = "prometheus-client" },
-    { name = "transformers" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.14.3,<4" },
-    { name = "bentoml", specifier = ">=1.4.39,<2" },
-    { name = "elide-bento-core", editable = "packages/elide-bento-core" },
-    { name = "gliner2", specifier = ">=1.3.2,<3" },
-    { name = "prometheus-client", specifier = ">=0.26.0" },
-    { name = "transformers", specifier = ">=5.15.0" },
-]
-
-[[package]]
-name = "elide-bento-ocr"
-version = "0.1.0"
-source = { editable = "packages/elide-bento-ocr" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "bentoml" },
-    { name = "elide-bento-core" },
-    { name = "onnx" },
-    { name = "pillow" },
-    { name = "prometheus-client" },
-    { name = "python-doctr" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.14.3,<4" },
-    { name = "bentoml", specifier = ">=1.4.39,<2" },
-    { name = "elide-bento-core", editable = "packages/elide-bento-core" },
-    { name = "onnx", specifier = ">=1.22.0" },
-    { name = "pillow", specifier = ">=12.3.0,<13" },
-    { name = "prometheus-client", specifier = ">=0.26.0" },
-    { name = "python-doctr", specifier = ">=1.0,<2" },
-]
-
-[[package]]
-name = "elide-bento-stt"
-version = "0.1.0"
-source = { editable = "packages/elide-bento-stt" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "bentoml" },
-    { name = "elide-bento-core" },
-    { name = "faster-whisper" },
-    { name = "librosa" },
-    { name = "prometheus-client" },
-    { name = "pyannote-audio" },
-    { name = "torch" },
-    { name = "torchaudio" },
-    { name = "transformers" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.14.3,<4" },
-    { name = "bentoml", specifier = ">=1.4.39,<2" },
-    { name = "elide-bento-core", editable = "packages/elide-bento-core" },
-    { name = "faster-whisper", specifier = ">=1.2,<2" },
-    { name = "librosa", specifier = ">=0.11,<1" },
-    { name = "prometheus-client", specifier = ">=0.26.0" },
-    { name = "pyannote-audio", specifier = ">=4.0,<5" },
-    { name = "torch", specifier = ">=2.8" },
-    { name = "torchaudio", specifier = ">=2.8" },
-    { name = "transformers", specifier = ">=5.15.0" },
-]
-
-[[package]]
-name = "elide-bento-vl"
-version = "0.1.0"
-source = { editable = "packages/elide-bento-vl" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "bentoml" },
-    { name = "elide-bento-core" },
-    { name = "paddleocr" },
-    { name = "paddlepaddle" },
-    { name = "paddlex", extra = ["ocr"] },
-    { name = "pillow" },
-    { name = "prometheus-client" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.14.3,<4" },
-    { name = "bentoml", specifier = ">=1.4.39,<2" },
-    { name = "elide-bento-core", editable = "packages/elide-bento-core" },
-    { name = "paddleocr", specifier = ">=3.5,<4" },
-    { name = "paddlepaddle", specifier = ">=3.0,<4" },
-    { name = "paddlex", extras = ["ocr"], specifier = ">=3.7.2,<4" },
-    { name = "pillow", specifier = ">=12.3.0,<13" },
-    { name = "prometheus-client", specifier = ">=0.26.0" },
 ]
 
 [[package]]

@@ -30,10 +30,10 @@ and this project adheres to
 
 ### Packages
 
-- **elide-bento-core:** Shared wire-contract schema and types
-- **elide-bento-ner:** Named-entity recognition service (GLiNER2)
-- **elide-bento-ocr:** OCR service (docTR)
-- **elide-bento-vl:** Vision-language OCR verification service (PaddleOCR-VL)
+- **bento-core:** Shared wire-contract schema and types
+- **bento-gliner2:** Named-entity recognition service (GLiNER2)
+- **bento-doctr:** OCR service (docTR)
+- **bento-paddleocr:** Vision-language OCR verification service (PaddleOCR-VL)
 
 ### Crates
 
@@ -42,7 +42,7 @@ and this project adheres to
 
 ### Notes
 
-- The crate's `stt` feature targets an `elide-bento-stt` service that is not
+- The crate's `stt` feature targets an `bento-whisper` service that is not
   yet part of this repository. The backend is implemented and compiles, but
   has no service to talk to until that package lands.
 - The `elide-*` dependencies track `main` rather than a tagged release, since

@@ -1,6 +1,6 @@
 //! Outgoing wire types for the STT `/transcribe` endpoint.
 //!
-//! Mirrors `elide_bento_core.stt.v1.SttRequest` from the inference
+//! Mirrors `bento_core.stt.v1.SttRequest` from the inference
 //! repository: base64-encoded audio bytes plus optional filename
 //! and language hint.
 

@@ -1,5 +1,5 @@
 //! [`BentoOcr`]: an [`OcrBackend`] backed by the
-//! `elide-bento-ocr` BentoML service.
+//! `bento-doctr` BentoML service.
 //!
 //! Wire contract: `POST /recognize` accepts a batched list of
 //! requests (each carrying base64-encoded image bytes + a
@@ -36,7 +36,7 @@ const ROUTE: &str = "recognize";
 
 /// BentoML OCR backend.
 ///
-/// Owns a cached [`Endpoint`] pointing at the `elide-bento-ocr`
+/// Owns a cached [`Endpoint`] pointing at the `bento-doctr`
 /// `/recognize` route, plus the per-deployment model id (echoed
 /// into [`OcrBackend::provenance`]) and a default per-word
 /// confidence threshold (the service drops anything weaker before

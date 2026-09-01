@@ -12,8 +12,8 @@ define log
 printf "[%s] [MAKE] [$(MAKECMDGOALS)] $(1)\n" "$$(date '+%Y-%m-%d %H:%M:%S')"
 endef
 
-# Python services, keyed by package suffix (packages/elide-bento-<suffix>).
-SERVICES := ocr vl ner stt
+# Python services, keyed by package suffix (packages/bento-<suffix>).
+SERVICES := doctr paddleocr gliner2 whisper
 
 
 # ─── Python ────────────────────────────────────────────────────
@@ -56,39 +56,39 @@ check: ## Python: fail if generated per-service requirements are stale (CI parit
 	@uv run python scripts/gen_requirements.py --check
 	@$(call log,Generated artifacts up to date.)
 
-.PHONY: serve-ocr
-serve-ocr: ## Python: serve the OCR (docTR) service locally with reload.
-	@$(call log,Serving elide-bento-ocr...)
-	@uv run bentoml serve elide_bento_ocr.service:OcrService --reload
+.PHONY: serve-doctr
+serve-doctr: ## Python: serve the OCR (docTR) service locally with reload.
+	@$(call log,Serving bento-doctr...)
+	@uv run bentoml serve bento_doctr.service:OcrService --reload
 
-.PHONY: serve-vl
-serve-vl: ## Python: serve the vision-language OCR (PaddleOCR-VL) service locally with reload.
-	@$(call log,Serving elide-bento-vl...)
-	@uv run bentoml serve elide_bento_vl.service:OcrVlService --reload
+.PHONY: serve-paddleocr
+serve-paddleocr: ## Python: serve the vision-language OCR (PaddleOCR-VL) service locally with reload.
+	@$(call log,Serving bento-paddleocr...)
+	@uv run bentoml serve bento_paddleocr.service:OcrVlService --reload
 
-.PHONY: serve-ner
-serve-ner: ## Python: serve the NER (GLiNER) service locally with reload.
-	@$(call log,Serving elide-bento-ner...)
-	@uv run bentoml serve elide_bento_ner.service:NerService --reload
+.PHONY: serve-gliner2
+serve-gliner2: ## Python: serve the NER (GLiNER) service locally with reload.
+	@$(call log,Serving bento-gliner2...)
+	@uv run bentoml serve bento_gliner2.service:NerService --reload
 
-.PHONY: serve-stt
-serve-stt: ## Python: serve the STT (faster-whisper) service locally with reload.
-	@$(call log,Serving elide-bento-stt...)
-	@uv run bentoml serve elide_bento_stt.service:SttService --reload
+.PHONY: serve-whisper
+serve-whisper: ## Python: serve the STT (faster-whisper) service locally with reload.
+	@$(call log,Serving bento-whisper...)
+	@uv run bentoml serve bento_whisper.service:SttService --reload
 
 .PHONY: build
 build: ## Python: build all Bentos from their bentofiles.
 	@for s in $(SERVICES); do \
-		$(call log,Building elide-bento-$$s...); \
-		uv run bentoml build -f packages/elide-bento-$$s/bentofile.yaml . ; \
+		$(call log,Building bento-$$s...); \
+		uv run bentoml build -f packages/bento-$$s/bentofile.yaml . ; \
 	done
 	@$(call log,Bentos built.)
 
 .PHONY: build-image
 build-image: ## Python: build + containerize all Bentos into local Docker images.
 	@for s in $(SERVICES); do \
-		$(call log,Containerizing elide-bento-$$s...); \
-		uv run bentoml build -f packages/elide-bento-$$s/bentofile.yaml --containerize . ; \
+		$(call log,Containerizing bento-$$s...); \
+		uv run bentoml build -f packages/bento-$$s/bentofile.yaml --containerize . ; \
 	done
 	@$(call log,Images built.)
 
