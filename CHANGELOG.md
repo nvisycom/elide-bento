@@ -17,11 +17,11 @@ and this project adheres to
 - OCR service backed by docTR
 - Vision-language OCR verification service backed by PaddleOCR-VL
 - Shared wire-contract schema and types consumed by every service
-- Rust client crate (`elide-bento`) implementing the `NerBackend`,
+- Rust client crate (`elide-bentoml`) implementing the `NerBackend`,
   `OcrBackend`, and `SttBackend` traits against these services
 - Per-service `requirements.txt` generation from `uv.lock`
   (`scripts/gen_requirements.py`), enforced in CI
-- Container image publishing to `ghcr.io/nvisycom/elide-bento-*`
+- Container image publishing to `ghcr.io/nvisycom/bento-*`
 - Rust CI: format, check, clippy, docs, test, release build, unused-dependency
   detection, and `cargo-deny`
 - Python CI: ruff lint and format, requirements drift check, pytest, and
@@ -30,20 +30,15 @@ and this project adheres to
 
 ### Packages
 
-- **elide-bento-core:** Shared wire-contract schema and types
-- **elide-bento-ner:** Named-entity recognition service (GLiNER2)
-- **elide-bento-ocr:** OCR service (docTR)
-- **elide-bento-vl:** Vision-language OCR verification service (PaddleOCR-VL)
+- **bento-core:** Shared wire-contract schema and types
+- **bento-gliner2:** Named-entity recognition service (GLiNER2)
+- **bento-doctr:** OCR service (docTR)
+- **bento-paddleocr:** Vision-language OCR verification service (PaddleOCR-VL)
 
 ### Crates
 
-- **elide-bento:** Rust client implementing elide's NER, OCR, and STT backend
+- **elide-bentoml:** Rust client implementing elide's NER, OCR, and STT backend
   traits against the BentoML services
 
-### Notes
-
-- The crate's `stt` feature targets an `elide-bento-stt` service that is not
-  yet part of this repository. The backend is implemented and compiles, but
-  has no service to talk to until that package lands.
 - The `elide-*` dependencies track `main` rather than a tagged release, since
   elide publishes no tags yet. This matches how `nvisycom/runtime` pins them.

@@ -43,10 +43,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [ocr, vl, ner]
+        service: [doctr, paddleocr, gliner2, whisper]
 
     env:
-      IMAGE: ghcr.io/nvisycom/elide-bento-${{ matrix.service }}
+      IMAGE: ghcr.io/nvisycom/bento-${{ matrix.service }}
 
     steps:
       - name: Checkout
@@ -68,16 +68,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sync
-        run: uv sync --locked --package elide-bento-${{ matrix.service }}
+        run: uv sync --locked --package bento-${{ matrix.service }}
 
       # BentoML builds the Bento from the service's Image config and generates
       # the Dockerfile (`--containerize`). The local image is tagged
-      # elide-bento-<service>:<bento-version>; re-tag for GHCR and push.
+      # bento-<service>:<bento-version>; re-tag for GHCR and push.
       - name: Build and containerize
         id: bento
         run: |
           tag=$(uv run bentoml build \
-            -f packages/elide-bento-${{ matrix.service }}/bentofile.yaml \
+            -f packages/bento-${{ matrix.service }}/bentofile.yaml \
             --containerize -o tag .)
           echo "image_tag=$tag" >> "$GITHUB_OUTPUT"
 

@@ -3,7 +3,7 @@
 [workspace]
 resolver = "3"
 members = [
-    "./crates/elide-bento",
+    "./crates/elide-bentoml",
 ]
 # Python (uv) workspace lives in `packages/`. Excluded so cargo
 # doesn't glob-scan it or complain about missing Cargo.toml files.
@@ -21,7 +21,7 @@ repository = "https://github.com/nvisycom/elide-bento"
 homepage = "https://github.com/nvisycom/elide-bento"
 # The crate is `publish = false`, so docs.rs never builds it; point at the
 # in-repo crate docs instead of a docs.rs URL that will always 404.
-documentation = "https://github.com/nvisycom/elide-bento/tree/main/crates/elide-bento"
+documentation = "https://github.com/nvisycom/elide-bento/tree/main/crates/elide-bentoml"
 
 [workspace.dependencies]
 # Default features are disabled for certain dependencies to allow
