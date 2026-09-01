@@ -1,10 +1,9 @@
 """Service configuration, read from the environment.
 
-A WhisperX pipeline serves the deployment: an ASR model named by
-``ELIDE_BENTO_MODEL_NAME``, optional forced alignment for word timings, and
-optional pyannote diarization for speaker labels. All knobs are env vars so
-they show up in the bento manifest and can be set per deployment without a
-code change.
+A faster-whisper model named by ``ELIDE_BENTO_MODEL_NAME`` serves the
+deployment, with optional pyannote diarization for speaker labels. All knobs
+are env vars so they show up in the bento manifest and can be set per
+deployment without a code change.
 """
 
 from __future__ import annotations
@@ -22,9 +21,9 @@ DIARIZE_ENV = "ELIDE_BENTO_STT_DIARIZE"
 HF_TOKEN_ENV = "ELIDE_BENTO_STT_HF_TOKEN"
 # Diarization pipeline id.
 DIARIZE_MODEL_ENV = "ELIDE_BENTO_STT_DIARIZE_MODEL"
-# Enable wav2vec2 forced alignment for word-level timings. On by default:
-# the contract carries per-word timings and raw Whisper does not produce them.
-ALIGN_ENV = "ELIDE_BENTO_STT_ALIGN"
+# Emit per-word timings. On by default: the contract carries them, and
+# faster-whisper produces them natively (no separate alignment pass).
+ALIGN_ENV = "ELIDE_BENTO_STT_WORD_TIMESTAMPS"
 # Reject audio longer than this. Transcription is O(duration) and a long clip
 # can occupy a worker for minutes.
 MAX_DURATION_ENV = "ELIDE_BENTO_STT_MAX_DURATION_SECONDS"

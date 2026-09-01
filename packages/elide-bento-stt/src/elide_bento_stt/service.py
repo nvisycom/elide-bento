@@ -1,4 +1,4 @@
-"""Speech-to-text inference service (WhisperX) exposed over HTTP via BentoML.
+"""Speech-to-text inference service (faster-whisper) exposed over HTTP via BentoML.
 
 The default implementation of the STT wire contract
 (``elide_bento_core.stt.v1``), and the service the Rust client's ``BentoStt``
@@ -74,13 +74,13 @@ image = (
 )
 class SttService:
     def __init__(self) -> None:
-        logger.info("loading WhisperX")
+        logger.info("loading faster-whisper")
         self.engine = Engine()
         logger.info(
-            "WhisperX ready (model=%s device=%s diarize=%s)",
+            "engine ready (model=%s device=%s diarize=%s)",
             self.engine.model_id,
             self.engine.device,
-            self.engine._diarizer is not None,
+            self.engine.diarizes,
         )
 
     # Not batchable: clips vary from seconds to an hour, so batching would let

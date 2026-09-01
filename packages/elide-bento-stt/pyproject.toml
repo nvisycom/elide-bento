@@ -14,12 +14,19 @@ dependencies = [
     # Audio decoding: librosa reads whatever the image's ffmpeg understands.
     "librosa>=0.11,<1",
     "prometheus-client>=0.26.0",
-    # WhisperX: faster-whisper ASR + wav2vec2 alignment + pyannote diarization.
-    # NOTE: currently unsatisfiable in this workspace — whisperx pins
-    # huggingface-hub<1.0.0 while elide-bento-ner needs transformers>=5.15.0
-    # (-> huggingface-hub>=1.5.0). See README. Left commented so the workspace
-    # resolves; uncomment once the conflict is resolved.
-    # "whisperx>=3.8,<4",
+    # ASR. WhisperX is deliberately not used: it pins huggingface-hub<1.0.0,
+    # which cannot coexist with elide-bento-ner's transformers>=5.15.0. Its
+    # three stages are assembled directly instead — faster-whisper for
+    # transcription, transformers' wav2vec2 for alignment, pyannote for
+    # diarization — none of which carry that ceiling.
+    "faster-whisper>=1.2,<2",
+    # Forced alignment (wav2vec2) for the per-word timings the contract
+    # carries; faster-whisper reports segment timings only.
+    "transformers>=5.15.0",
+    "torch>=2.8",
+    "torchaudio>=2.8",
+    # Speaker diarization.
+    "pyannote-audio>=4.0,<5",
 ]
 
 [build-system]

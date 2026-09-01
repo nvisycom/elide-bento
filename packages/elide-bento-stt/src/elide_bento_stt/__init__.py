@@ -1,1 +1,1 @@
-"""Speech-to-text inference service (WhisperX) for the elide toolkit."""
+"""Speech-to-text inference service (faster-whisper) for the elide toolkit."""
