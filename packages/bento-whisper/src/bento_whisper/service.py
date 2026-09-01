@@ -26,6 +26,7 @@ from bento_core.stt.v1 import SttRequest, SttResponse
 from bentoml.exceptions import BentoMLException, InternalServerError, InvalidArgument
 from prometheus_client import Histogram
 
+from bento_whisper import config
 from bento_whisper.engine import SAMPLE_RATE, AudioTooLongError, Engine
 
 logger = get_logger("nvisy.stt")
@@ -90,12 +91,15 @@ class SttService:
     @bentoml.api
     def transcribe(self, request: SttRequest, ctx: bentoml.Context) -> SttResponse:
         rid = request_id(ctx)
-        limit = self.engine.max_duration_seconds
-        # Decode is bounded by the limit rather than checked after it: a long
-        # compressed input would otherwise be fully decoded and resampled into
+        # Decode is bounded by the duration limit rather than checked after
+        # it: a long input would otherwise be fully decoded and resampled into
         # memory before being rejected. One extra second is decoded so an
         # over-length clip is still detectable as over-length.
-        audio = _decode_audio(request.audio, max_seconds=limit + 1)
+        audio = _decode_audio(
+            request.audio,
+            max_seconds=self.engine.max_duration_seconds + 1,
+            max_bytes=config.max_bytes(),
+        )
 
         try:
             seconds = self.engine.check_duration(audio)
@@ -115,34 +119,47 @@ class SttService:
             raise InternalServerError("STT inference failed") from exc
 
 
-def _decode_audio(audio_b64: str, max_seconds: float | None = None):
+def _decode_audio(
+    audio_b64: str,
+    max_seconds: float | None = None,
+    max_bytes: int | None = None,
+):
     """Base64 audio bytes to a mono 16 kHz float32 waveform.
 
     Decoding goes through ffmpeg (via ``soundfile``/``librosa``) so any
     container the deployment's ffmpeg understands is accepted. A payload that
     is not decodable audio is a 400, not a 500 — it is the caller's input.
 
-    ``max_seconds`` bounds the decode itself, so an over-long input costs the
-    worker one bounded read rather than a full decode and resample of however
-    much audio the caller sent. The compressed payload is capped first, since
-    even the decode's own buffer is the caller's to inflate.
+    Two independent bounds, because neither implies the other:
+
+    - ``max_bytes`` caps the request payload, applied to the base64 text
+      before decoding it, so an oversized body is refused without allocating
+      the decoded bytes.
+    - ``max_seconds`` caps the decode itself, so a long input costs one
+      bounded read rather than a full decode and resample of however much
+      audio the caller sent.
+
+    A duration limit cannot be turned into a byte limit: how many bytes a
+    given duration occupies depends on the source's sample rate, channel
+    count and codec, none of which are known until the container is opened.
+    Deriving one from the other would reject valid audio - a 48 kHz stereo
+    WAV is six times the size of the 16 kHz mono waveform it decodes to.
     """
+    if max_bytes is not None:
+        # Applied to the base64 text: 4 characters encode 3 bytes, so this
+        # refuses an oversized body before allocating the decoded form.
+        encoded_limit = (max_bytes + 2) // 3 * 4
+        if len(audio_b64) > encoded_limit:
+            raise InvalidArgument(
+                f"audio payload is {len(audio_b64)} base64 characters; "
+                f"the limit is {encoded_limit} ({max_bytes} bytes)"
+            )
     try:
         raw = base64.b64decode(audio_b64, validate=True)
     except (binascii.Error, ValueError) as exc:
         raise InvalidArgument("audio is not valid base64") from exc
     if not raw:
         raise InvalidArgument("audio is empty")
-    if max_seconds is not None:
-        # A generous ceiling on the compressed bytes: uncompressed 16-bit mono
-        # PCM at the target rate is the worst realistic case, so anything past
-        # it cannot be within the duration limit whatever the codec.
-        max_bytes = int(max_seconds * SAMPLE_RATE * 2)
-        if len(raw) > max_bytes:
-            raise InvalidArgument(
-                f"audio is {len(raw)} bytes; the limit is {max_bytes} "
-                f"({max_seconds:.0f}s of uncompressed audio)"
-            )
 
     import librosa
 

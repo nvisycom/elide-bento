@@ -14,15 +14,15 @@ from bento_whisper.service import SAMPLE_RATE, _decode_audio
 from bentoml.exceptions import InvalidArgument
 
 
-def _wav_b64(seconds: float, rate: int = SAMPLE_RATE) -> str:
-    """A base64 silent mono WAV of the given length."""
+def _wav_b64(seconds: float, rate: int = SAMPLE_RATE, channels: int = 1) -> str:
+    """A base64 silent WAV of the given length, rate and channel count."""
     buf = io.BytesIO()
     with wave.open(buf, "wb") as w:
-        w.setnchannels(1)
+        w.setnchannels(channels)
         w.setsampwidth(2)
         w.setframerate(rate)
-        frames = int(seconds * rate)
-        w.writeframes(struct.pack(f"<{frames}h", *([0] * frames)))
+        samples = int(seconds * rate) * channels
+        w.writeframes(struct.pack(f"<{samples}h", *([0] * samples)))
     return base64.b64encode(buf.getvalue()).decode()
 
 
@@ -48,20 +48,30 @@ def test_rejects_undecodable_bytes():
 
 
 def test_oversized_payload_rejected_before_decode():
-    """The byte cap rejects a long payload without decoding it.
-
-    The point of the guard: an over-long input must not be fully decoded and
-    resampled into memory before the duration check rejects it.
-    """
-    with pytest.raises(InvalidArgument, match="the limit is"):
-        _decode_audio(_wav_b64(2.0), max_seconds=0.5)
+    """The size cap refuses an oversized body without decoding it."""
+    with pytest.raises(InvalidArgument, match="base64 characters"):
+        _decode_audio(_wav_b64(1.0), max_bytes=1024)
 
 
 def test_decode_is_bounded_by_max_seconds():
-    """A payload within the byte cap still decodes no more than the bound.
+    """Audio longer than the bound is truncated, not decoded whole.
 
-    A highly compressed input can pass the byte check and still be long, so
-    the decode itself is capped too.
+    The input must actually exceed `max_seconds`, otherwise the test would
+    pass even if the duration argument were ignored entirely.
     """
-    waveform = _decode_audio(_wav_b64(1.0), max_seconds=10.0)
+    waveform = _decode_audio(_wav_b64(3.0), max_seconds=1.0)
+    # One second decoded, not three.
     assert abs(len(waveform) - SAMPLE_RATE) < 100
+
+
+def test_valid_high_rate_stereo_is_not_rejected():
+    """A 48 kHz stereo source is accepted and resampled to mono 16 kHz.
+
+    Regression: deriving the byte cap from the *output* PCM format rejected
+    valid audio, since a 48 kHz stereo WAV is six times the size of the
+    16 kHz mono waveform it decodes to.
+    """
+    waveform = _decode_audio(
+        _wav_b64(2.0, rate=48_000, channels=2), max_seconds=61, max_bytes=512 * 1024 * 1024
+    )
+    assert abs(len(waveform) - 2 * SAMPLE_RATE) < 100

@@ -2,9 +2,9 @@
 
 [![Build](https://img.shields.io/github/actions/workflow/status/nvisycom/elide-bento/build.yml?branch=main&label=build%20%26%20test&style=flat-square)](https://github.com/nvisycom/elide-bento/actions/workflows/build.yml)
 
-Shared wire-contract types for the elide-bento inference services. The OCR, NER,
-and vision-language OCR services all depend on this package, so the HTTP
-contract is defined once on the Python side.
+Shared wire-contract types for the elide-bento inference services. The OCR,
+NER, vision-language OCR and speech-to-text services all depend on this
+package, so the HTTP contract is defined once on the Python side.
 
 ## Overview
 
@@ -19,6 +19,9 @@ Import a specific version explicitly:
   order).
 - [`bento_core.ner.v1`](src/bento_core/ner/v1) — NER contract (`Entity` with
   label, score, and character offsets).
+- [`bento_core.stt.v1`](src/bento_core/stt/v1.py) — speech-to-text
+  contract (base64 audio in; segments with millisecond timings, optional
+  speaker label, language, confidence, and per-word breakdown out).
 
 The wire is camelCase, mirroring the Rust side's serde
 `rename_all = "camelCase"`. These pydantic models are the source of truth

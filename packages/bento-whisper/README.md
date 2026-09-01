@@ -10,8 +10,9 @@ for transcription — including native word-level timings — with optional
 labels.
 
 WhisperX bundles the same pieces and is the obvious choice, but it pins
-`huggingface-hub<1.0.0`, which cannot coexist with the NER service's
-`transformers>=5.15.0` in this workspace's single lock. Assembling the stages
+`huggingface-hub<1.0.0`. `bento-gliner2` requires `transformers>=5.15.0`,
+whose own resolved version requires `huggingface-hub>=1.5.0` — so the two
+ceilings cannot coexist in this workspace's single lock. Assembling the stages
 directly avoids that ceiling, and costs little: faster-whisper reports word
 timings natively, so the separate forced-alignment pass WhisperX exists for is
 not needed.
@@ -35,8 +36,8 @@ not needed.
 }
 ```
 
-Timings are **integer milliseconds**. WhisperX works in float seconds; the
-conversion happens once, at the engine boundary.
+Timings are **integer milliseconds**. faster-whisper works in float seconds;
+the conversion happens once, at the engine boundary.
 
 ## Configuration
 
@@ -52,6 +53,7 @@ conversion happens once, at the engine boundary.
 | `ELIDE_BENTO_STT_DIARIZE_MODEL` | `pyannote/speaker-diarization-community-1` | diarization pipeline |
 | `ELIDE_BENTO_STT_MIN_SPEAKERS` / `_MAX_SPEAKERS` | — | bound the speaker search |
 | `ELIDE_BENTO_STT_MAX_DURATION_SECONDS` | `3600` | reject longer clips |
+| `ELIDE_BENTO_STT_MAX_BYTES` | `512 MiB` | reject larger request payloads |
 
 ## Why `large-v3-turbo`
 
@@ -108,6 +110,6 @@ path, so treat it as you would any other "run this binary" setting.
 ## Run locally
 
 ```bash
-make serve-stt
+make serve-whisper
 # or: uv run bentoml serve bento_whisper.service:SttService --reload
 ```

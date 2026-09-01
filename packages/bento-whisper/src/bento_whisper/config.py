@@ -27,6 +27,11 @@ ALIGN_ENV = "ELIDE_BENTO_STT_WORD_TIMESTAMPS"
 # Reject audio longer than this. Transcription is O(duration) and a long clip
 # can occupy a worker for minutes.
 MAX_DURATION_ENV = "ELIDE_BENTO_STT_MAX_DURATION_SECONDS"
+# Reject request payloads larger than this, before decoding. Independent of
+# the duration limit: how many bytes a given duration occupies depends on the
+# source's rate, channel count and codec, none of which are known until the
+# container is opened.
+MAX_BYTES_ENV = "ELIDE_BENTO_STT_MAX_BYTES"
 # Bound the diarization search when the caller gives no hint.
 MIN_SPEAKERS_ENV = "ELIDE_BENTO_STT_MIN_SPEAKERS"
 MAX_SPEAKERS_ENV = "ELIDE_BENTO_STT_MAX_SPEAKERS"
@@ -38,6 +43,9 @@ MAX_SPEAKERS_ENV = "ELIDE_BENTO_STT_MAX_SPEAKERS"
 # is WhisperX's current default reference.
 DEFAULT_DIARIZE_MODEL = "pyannote/speaker-diarization-community-1"
 DEFAULT_MAX_DURATION_SECONDS = 3600
+# 512 MiB: comfortably above an hour of high-rate stereo PCM, while still
+# bounding what one request can make a worker read.
+DEFAULT_MAX_BYTES = 512 * 1024 * 1024
 
 
 def compute_type() -> str:
@@ -67,6 +75,10 @@ def diarize_model() -> str:
 
 def max_duration_seconds() -> int:
     return _positive_int(MAX_DURATION_ENV, DEFAULT_MAX_DURATION_SECONDS)
+
+
+def max_bytes() -> int:
+    return _positive_int(MAX_BYTES_ENV, DEFAULT_MAX_BYTES)
 
 
 def min_speakers() -> int | None:
