@@ -1,7 +1,7 @@
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package]
-name = "elide-bento"
+name = "elide-bentoml"
 description = "BentoML-backed NER, OCR, and STT backends for the elide toolkit"
 keywords = ["elide", "bento", "bentoml", "ner", "ocr"]
 categories = ["api-bindings"]

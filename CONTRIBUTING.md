@@ -79,11 +79,12 @@ change under `crates/` runs the Rust workflows. A change to both runs both.
 ## Project Structure
 
 ```text
-crates/elide-bento/        Rust client for the services below
+crates/elide-bentoml/      Rust client for the services below
 packages/elide-bento-core/ Shared request/response contracts
 packages/elide-bento-ner/  Named-entity recognition (GLiNER)
 packages/elide-bento-ocr/  OCR (docTR)
 packages/elide-bento-vl/   Vision-language OCR (PaddleOCR-VL)
+packages/elide-bento-stt/  Speech-to-text (faster-whisper)
 docs/design/               Per-service design notes
 scripts/                   Repository tooling
 ```
