@@ -48,7 +48,7 @@ until one of these resolves:
       "speakerId": "SPEAKER_00", "language": "en", "confidence": 0.94,
       "words": [{ "startMs": 0, "endMs": 480, "text": "Hello", "confidence": 0.97 }] }
   ],
-  "modelId": "large-v3", "language": "en", "durationMs": 2400
+  "modelId": "large-v3-turbo", "language": "en", "durationMs": 2400
 }
 ```
 
@@ -59,7 +59,7 @@ conversion happens once, at the engine boundary.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `ELIDE_BENTO_MODEL_NAME` | `large-v3` | faster-whisper model id |
+| `ELIDE_BENTO_MODEL_NAME` | `large-v3-turbo` | faster-whisper model id |
 | `ELIDE_BENTO_MODEL_PATH` | `/models` | BYO weights mount, when present |
 | `ELIDE_BENTO_STT_DEVICE` | `cpu` | `cpu` or `cuda` |
 | `ELIDE_BENTO_STT_COMPUTE_TYPE` | `int8` (cpu) / `float16` (cuda) | faster-whisper precision |
@@ -69,6 +69,31 @@ conversion happens once, at the engine boundary.
 | `ELIDE_BENTO_STT_DIARIZE_MODEL` | `pyannote/speaker-diarization-community-1` | diarization pipeline |
 | `ELIDE_BENTO_STT_MIN_SPEAKERS` / `_MAX_SPEAKERS` | — | bound the speaker search |
 | `ELIDE_BENTO_STT_MAX_DURATION_SECONDS` | `3600` | reject longer clips |
+
+## Why `large-v3-turbo`
+
+MIT-licensed, 99 languages, native word timestamps, and 2-5x faster than
+`large-v3` (its decoder is pruned from 32 layers to 4) for a small accuracy
+cost.
+
+It is **not** the WER leader. On the
+[Open ASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard)
+roughly ten open models score better — but each fails a bar that matters more
+here:
+
+| Model | Why not |
+|---|---|
+| NVIDIA Parakeet-TDT-0.6B-v3 | ~50x faster, but needs the NeMo runtime, is GPU-oriented, and covers 25 European languages rather than 99 |
+| NVIDIA Canary-Qwen-2.5B | English-only |
+| Mistral Voxtral Small | vLLM, ~55GB VRAM |
+| ARK-ASR-3B, MOSS-Transcribe | Preview models from newer labs; licences not independently confirmed |
+
+So this is a deliberate trade of raw accuracy for ecosystem fit, CPU viability
+and language coverage — the same bar the NER service sets for its default
+("Apache-2.0, CPU-viable, multilingual"). Parakeet is the one worth revisiting
+if this service ever moves to GPU, and especially if the WhisperX dependency
+is resolved by dropping WhisperX (see above), since that already means
+rewriting the engine internals.
 
 ## Diarization
 

@@ -10,7 +10,7 @@ labels should not pay for them.
 
 Run locally::
 
-    ELIDE_BENTO_MODEL_NAME=large-v3 \\
+    ELIDE_BENTO_MODEL_NAME=large-v3-turbo \\
         uv run bentoml serve elide_bento_stt.service:SttService --reload
 """
 
@@ -30,9 +30,16 @@ from elide_bento_stt.engine import SAMPLE_RATE, AudioTooLongError, Engine
 
 logger = get_logger("nvisy.stt")
 
-# faster-whisper large-v3. Declared as the ELIDE_BENTO_MODEL_NAME default below
-# (single source of truth).
-DEFAULT_MODEL = "large-v3"
+# faster-whisper large-v3-turbo: MIT, 99 languages, native word timestamps,
+# 2-5x faster than large-v3 for a small accuracy cost (a pruned 4-layer
+# decoder). Declared as the ELIDE_BENTO_MODEL_NAME default below (single
+# source of truth).
+#
+# Not the WER leader on the Open ASR Leaderboard - roughly ten open models
+# score better - but the leaders (Parakeet, Canary, Voxtral) each need NeMo or
+# vLLM, are GPU-bound, and several are English-only. This picks ecosystem fit
+# and CPU viability over raw accuracy; see the README.
+DEFAULT_MODEL = "large-v3-turbo"
 
 duration_metric = Histogram(
     "elide_bento_stt_audio_seconds",

@@ -28,7 +28,7 @@ def test_response_serializes_camelcase():
                 words=[Word(start_ms=0, end_ms=480, text="Hello", confidence=0.97)],
             )
         ],
-        model_id="large-v3",
+        model_id="large-v3-turbo",
         language="en",
         duration_ms=2400,
     )
@@ -36,13 +36,15 @@ def test_response_serializes_camelcase():
     assert dumped["segments"][0]["startMs"] == 0
     assert dumped["segments"][0]["speakerId"] == "SPEAKER_00"
     assert dumped["segments"][0]["words"][0]["endMs"] == 480
-    assert dumped["modelId"] == "large-v3"
+    assert dumped["modelId"] == "large-v3-turbo"
     assert dumped["durationMs"] == 2400
 
 
 def test_optional_fields_omitted_are_none():
     """A non-diarizing, non-aligning deployment still produces a valid response."""
-    resp = SttResponse(segments=[Segment(start_ms=0, end_ms=100, text="hi")], model_id="large-v3")
+    resp = SttResponse(
+        segments=[Segment(start_ms=0, end_ms=100, text="hi")], model_id="large-v3-turbo"
+    )
     seg = resp.model_dump(by_alias=True, mode="json")["segments"][0]
     assert seg["speakerId"] is None
     assert seg["confidence"] is None

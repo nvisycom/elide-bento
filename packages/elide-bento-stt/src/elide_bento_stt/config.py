@@ -32,8 +32,9 @@ MAX_DURATION_ENV = "ELIDE_BENTO_STT_MAX_DURATION_SECONDS"
 MIN_SPEAKERS_ENV = "ELIDE_BENTO_STT_MIN_SPEAKERS"
 MAX_SPEAKERS_ENV = "ELIDE_BENTO_STT_MAX_SPEAKERS"
 
-# faster-whisper large-v3, MIT-licensed weights, the WhisperX default.
-DEFAULT_MODEL = "large-v3"
+# The ASR model default lives in `service.py`, declared as the
+# ELIDE_BENTO_MODEL_NAME env default (single source of truth, matching the
+# other services).
 # CC-BY-4.0 (gated on Hugging Face). Supersedes speaker-diarization-3.1 and
 # is WhisperX's current default reference.
 DEFAULT_DIARIZE_MODEL = "pyannote/speaker-diarization-community-1"

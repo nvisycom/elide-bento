@@ -6,6 +6,7 @@ fake WhisperX result dicts, so they need no model weights.
 
 import pytest
 from elide_bento_stt.engine import _majority_speaker, _to_ms, project
+from elide_bento_stt.service import DEFAULT_MODEL
 
 
 def test_to_ms_rounds_not_truncates():
@@ -23,13 +24,13 @@ def test_to_ms_handles_absent_and_negative():
 
 def test_project_maps_segments_to_milliseconds():
     result = {"segments": [{"start": 0.0, "end": 2.4, "text": " Hello there. "}], "language": "en"}
-    resp = project(result, "large-v3", "en", 2400)
+    resp = project(result, "large-v3-turbo", "en", 2400)
     seg = resp.segments[0]
     assert (seg.start_ms, seg.end_ms) == (0, 2400)
     # Text is stripped: Whisper pads segments with a leading space.
     assert seg.text == "Hello there."
     assert seg.language == "en"
-    assert resp.model_id == "large-v3" and resp.duration_ms == 2400
+    assert resp.model_id == "large-v3-turbo" and resp.duration_ms == 2400
 
 
 def test_project_drops_segments_without_timing():
@@ -113,3 +114,13 @@ def test_log_probability_is_not_reported_as_confidence():
     """faster-whisper's avg_logprob is not a [0,1] confidence; it must not leak."""
     result = {"segments": [{"start": 0.0, "end": 1.0, "text": "x", "avg_logprob": -0.35}]}
     assert project(result, "m", None, None).segments[0].confidence is None
+
+
+def test_default_model_is_turbo():
+    """The default is large-v3-turbo, not large-v3.
+
+    Pinned deliberately: turbo is 2-5x faster for a small accuracy cost, and
+    the choice is documented in the README. A silent revert to large-v3 would
+    slow every deployment that does not set ELIDE_BENTO_MODEL_NAME.
+    """
+    assert DEFAULT_MODEL == "large-v3-turbo"
