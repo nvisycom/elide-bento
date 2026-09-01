@@ -111,6 +111,9 @@ if your deployment has a licence policy, check it before enabling.
 
 ## Run locally
 
+Not yet possible — see the status section above. Once `whisperx` is
+installable, this is the command, and `make serve-stt` wraps it:
+
 ```bash
 uv run bentoml serve elide_bento_stt.service:SttService --reload
 ```

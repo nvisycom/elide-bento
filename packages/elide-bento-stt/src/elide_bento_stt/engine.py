@@ -79,7 +79,7 @@ class Engine:
 
     def transcribe(self, audio: Any, language: str | None = None) -> SttResponse:
         """Run the pipeline over one clip and map it onto the contract."""
-        import whisperx
+        whisperx = _import_whisperx()
 
         result = self._model.transcribe(audio, language=language)
         detected = result.get("language") or language
@@ -118,7 +118,7 @@ class Engine:
         """
         if language in self._align_cache:
             return self._align_cache[language]
-        import whisperx
+        whisperx = _import_whisperx()
 
         try:
             model_a, metadata = whisperx.load_align_model(
@@ -135,8 +135,34 @@ class Engine:
 SAMPLE_RATE = 16_000
 
 
+class WhisperXUnavailableError(RuntimeError):
+    """`whisperx` is not installed in this environment.
+
+    Raised in place of a bare ``ModuleNotFoundError`` so the reason — a
+    workspace dependency conflict, not a missing install step — is visible
+    at the point of failure rather than only in the README.
+    """
+
+    def __init__(self) -> None:
+        super().__init__(
+            "whisperx is not installed. It pins huggingface-hub<1.0.0, which "
+            "conflicts with elide-bento-ner's transformers>=5.15.0, so it is "
+            "commented out in packages/elide-bento-stt/pyproject.toml. See "
+            "that package's README for the three ways to resolve it."
+        )
+
+
+def _import_whisperx():
+    """The `whisperx` module, or a pointed error explaining its absence."""
+    try:
+        import whisperx
+    except ModuleNotFoundError as exc:  # pragma: no cover - env-dependent
+        raise WhisperXUnavailableError from exc
+    return whisperx
+
+
 def _load(model_id: str, device: str, compute_type: str):
-    import whisperx
+    whisperx = _import_whisperx()
 
     return whisperx.load_model(model_id, device, compute_type=compute_type)
 
@@ -148,7 +174,7 @@ def _load_diarizer(device: str):
     token the load fails, so we surface a pointed error rather than whatever
     huggingface_hub raises.
     """
-    import whisperx
+    whisperx = _import_whisperx()
 
     token = config.hf_token()
     if not token:

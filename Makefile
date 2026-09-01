@@ -74,10 +74,17 @@ serve-ner: ## Python: serve the NER (GLiNER) service locally with reload.
 	@$(call log,Serving elide-bento-ner...)
 	@uv run bentoml serve elide_bento_ner.service:NerService --reload
 
+# Kept, but guarded: `whisperx` cannot resolve alongside elide-bento-ner in
+# this workspace (see packages/elide-bento-stt/README.md), so the serve would
+# fail on `import whisperx` with a stack trace that hides the real reason.
+# Drop the guard once the dependency is installable.
 .PHONY: serve-stt
-serve-stt: ## Python: serve the STT (WhisperX) service locally with reload.
-	@$(call log,Serving elide-bento-stt...)
-	@uv run bentoml serve elide_bento_stt.service:SttService --reload
+serve-stt: ## Python: serve the STT (WhisperX) service (blocked: see README).
+	@$(call log,elide-bento-stt cannot be served yet.)
+	@echo "  whisperx is not installed: it pins huggingface-hub<1.0.0, which"
+	@echo "  conflicts with elide-bento-ner's transformers>=5.15.0."
+	@echo "  See packages/elide-bento-stt/README.md for the three ways out."
+	@exit 1
 
 .PHONY: build
 build: ## Python: build all Bentos from their bentofiles.

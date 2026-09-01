@@ -124,3 +124,24 @@ def test_default_model_is_turbo():
     slow every deployment that does not set ELIDE_BENTO_MODEL_NAME.
     """
     assert DEFAULT_MODEL == "large-v3-turbo"
+
+
+def test_missing_whisperx_explains_itself():
+    """A missing `whisperx` names the dependency conflict, not just the module.
+
+    The package is commented out in pyproject.toml, so a bare
+    ModuleNotFoundError would look like a botched install rather than the
+    deliberate workspace conflict it is.
+    """
+    import pytest
+    from elide_bento_stt.engine import WhisperXUnavailableError, _import_whisperx
+
+    try:
+        import whisperx  # noqa: F401
+    except ModuleNotFoundError:
+        pass
+    else:
+        pytest.skip("whisperx is installed; the guard cannot trigger")
+
+    with pytest.raises(WhisperXUnavailableError, match="huggingface-hub"):
+        _import_whisperx()
