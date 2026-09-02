@@ -386,7 +386,7 @@ dependencies = [
 [[package]]
 name = "elide-core"
 version = "0.1.0"
-source = "git+https://github.com/nvisycom/elide?branch=main#c9d88476138fcdbccb59c9dfe070323ed36e2081"
+source = "git+https://github.com/nvisycom/elide?branch=main#846b159aaeea250242f49323af42438c54ae9283"
 dependencies = [
  "async-trait",
  "blake3",
@@ -398,7 +398,6 @@ dependencies = [
  "jiff",
  "oxilangtag",
  "serde",
- "type-map",
  "uuid",
 ]
 
@@ -419,7 +418,7 @@ dependencies = [
 [[package]]
 name = "elide-ner"
 version = "0.1.0"
-source = "git+https://github.com/nvisycom/elide?branch=main#c9d88476138fcdbccb59c9dfe070323ed36e2081"
+source = "git+https://github.com/nvisycom/elide?branch=main#846b159aaeea250242f49323af42438c54ae9283"
 dependencies = [
  "async-trait",
  "derive_builder",
@@ -432,7 +431,7 @@ dependencies = [
 [[package]]
 name = "elide-ocr"
 version = "0.1.0"
-source = "git+https://github.com/nvisycom/elide?branch=main#c9d88476138fcdbccb59c9dfe070323ed36e2081"
+source = "git+https://github.com/nvisycom/elide?branch=main#846b159aaeea250242f49323af42438c54ae9283"
 dependencies = [
  "async-trait",
  "derive_builder",
@@ -444,7 +443,7 @@ dependencies = [
 [[package]]
 name = "elide-stt"
 version = "0.1.0"
-source = "git+https://github.com/nvisycom/elide?branch=main#c9d88476138fcdbccb59c9dfe070323ed36e2081"
+source = "git+https://github.com/nvisycom/elide?branch=main#846b159aaeea250242f49323af42438c54ae9283"
 dependencies = [
  "async-trait",
  "derive_builder",
@@ -1304,7 +1303,7 @@ dependencies = [
  "once_cell",
  "socket2",
  "tracing",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1541,7 +1540,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1992,15 +1991,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
-name = "type-map"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb30dbbd9036155e74adad6812e9898d03ec374946234fbcebd5dfc7b9187b90"
-dependencies = [
- "rustc-hash",
-]
-
-[[package]]
 name = "unicase"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2183,7 +2173,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
