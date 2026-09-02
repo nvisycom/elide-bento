@@ -43,9 +43,6 @@ Vision-language OCR verification, for text docTR reads with low confidence.
 **[bento-whisper](packages/bento-whisper)**  
 Speech-to-text, so audio reaches the same detection pipeline as text.
 
-**[bento-core](packages/bento-core)**  
-The wire-contract types the services share, and the definition a replacement reproduces.
-
 ## Clients
 
 **[elide-bentoml](crates/elide-bentoml)**  
@@ -54,13 +51,17 @@ The Rust client for the services above, feature-gated per backend (`ner`, `ocr`,
 **[elide-gladia](crates/elide-gladia)**  
 A Gladia-backed speech-to-text backend, for hosted transcription instead of self-hosted Whisper.
 
-## Bring your own inference
+## Contract
 
-The Rust client speaks each service through its wire contract, not the model
-behind it. Any HTTP service reproducing the `/recognize` (NER, OCR, VL) or
-`/transcribe` (STT) contract from [`bento-core`](packages/bento-core) is a
-drop-in replacement for the shipped packages, including self-hosted or custom
-models and weights. Each package README documents its wire shape.
+**[bento-core](packages/bento-core)**  
+The wire-contract types the services share. Not a service itself: no
+`bentofile.yaml`, no serve target, just the shapes both sides agree on.
+
+The Rust client speaks each service through that contract, not the model behind
+it. Any HTTP service reproducing the `/recognize` (NER, OCR, VL) or
+`/transcribe` (STT) contract is a drop-in replacement for the shipped packages,
+including self-hosted or custom models and weights. Each package README
+documents its wire shape.
 
 ## Quick Start
 
