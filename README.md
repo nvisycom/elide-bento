@@ -1,19 +1,27 @@
-# elide-provider
+<div align="center">
+
+# Elide Provider
+
+**Inference services implementing Elide's recognizer contracts.**
+
+Self-hosted NER, OCR, and speech models behind one wire contract, with a
+Rust client that speaks it.
 
 [![Build](https://img.shields.io/github/actions/workflow/status/nvisycom/elide-provider/build.yml?branch=main&label=build&style=flat-square)](https://github.com/nvisycom/elide-provider/actions/workflows/build.yml)
 [![Security](https://img.shields.io/github/actions/workflow/status/nvisycom/elide-provider/security.yml?branch=main&label=security&style=flat-square)](https://github.com/nvisycom/elide-provider/actions/workflows/security.yml)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
 
-BentoML inference services implementing [elide](https://github.com/nvisycom/elide)'s
-recognizer contracts.
+[**nvisy.com**](https://nvisy.com) · [**docs.nvisy.com**](https://docs.nvisy.com)
 
-A workspace that pairs three BentoML-hosted Python model services (plus a
-shared contract library) with a Rust client that speaks their wire
-contract. Any elide consumer — the
-[runtime](https://github.com/nvisycom/runtime) engine, other
-elide-embedding hosts — can drop this in as their `NerBackend` /
-`OcrBackend` / `SttBackend` implementation. The Python side ships as
-Docker containers deployed as sidecars; the Rust side is a library
-crate the consumer embeds directly.
+</div>
+
+A workspace pairing BentoML-hosted Python model services with Rust client
+crates that speak their wire contract. Any
+[Elide](https://github.com/nvisycom/elide) consumer, including the
+[Elide Runtime](https://github.com/nvisycom/elide-runtime) engine, drops these
+in as its `NerBackend`, `OcrBackend`, or `SttBackend` implementation. The
+Python side ships as Docker containers deployed as sidecars; the Rust side is
+a library crate the consumer embeds directly.
 
 > [!WARNING]
 > **Active development: API not stable.** This project is under active
@@ -21,14 +29,38 @@ crate the consumer embeds directly.
 > change without notice between releases. Pin a specific commit if you
 > depend on this in production.
 
-## Bring Your Own Inference
+## Services
 
-The Rust client speaks each service through its wire contract, not the
-specific model behind it. Any HTTP service that reproduces the
-`/recognize` (NER, OCR, VL) or `/transcribe` (STT) contract from
-`bento-core` is a drop-in replacement for the shipped Python
-packages, including self-hosted or custom models and weights. Each
-package README documents its wire shape.
+**[bento-gliner2](packages/bento-gliner2)**  
+Schema-driven NER and PII detection, so the labels to find are named per call rather than baked into the model.
+
+**[bento-doctr](packages/bento-doctr)**  
+The default OCR service, wrapping docTR.
+
+**[bento-paddleocr](packages/bento-paddleocr)**  
+Vision-language OCR verification, for text docTR reads with low confidence.
+
+**[bento-whisper](packages/bento-whisper)**  
+Speech-to-text, so audio reaches the same detection pipeline as text.
+
+**[bento-core](packages/bento-core)**  
+The wire-contract types the services share, and the definition a replacement reproduces.
+
+## Clients
+
+**[elide-bentoml](crates/elide-bentoml)**  
+The Rust client for the services above, feature-gated per backend (`ner`, `ocr`, `stt`).
+
+**[elide-gladia](crates/elide-gladia)**  
+A Gladia-backed speech-to-text backend, for hosted transcription instead of self-hosted Whisper.
+
+## Bring your own inference
+
+The Rust client speaks each service through its wire contract, not the model
+behind it. Any HTTP service reproducing the `/recognize` (NER, OCR, VL) or
+`/transcribe` (STT) contract from [`bento-core`](packages/bento-core) is a
+drop-in replacement for the shipped packages, including self-hosted or custom
+models and weights. Each package README documents its wire shape.
 
 ## Quick Start
 
@@ -37,8 +69,8 @@ The fastest way to get started is with [Nvisy Cloud](https://nvisy.com).
 For self-hosted use, build and run each service with:
 
 ```bash
-make sync            # install workspace deps
-make serve-ner       # or serve-ocr, serve-vl
+make sync             # install workspace deps
+make serve-gliner2    # or serve-doctr, serve-paddleocr, serve-whisper
 ```
 
 or build the Docker images:
@@ -48,15 +80,11 @@ make build           # every service
 make build-image     # build + containerize
 ```
 
-## Contributing
+## Project
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, the local CI targets,
-and the pull-request process. Notable changes are recorded in the
-[CHANGELOG](CHANGELOG.md).
-
-## License
-
-Apache 2.0 License, see [LICENSE](LICENSE)
+- **Changelog**: [CHANGELOG.md](CHANGELOG.md) for release notes and version history
+- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md) for setup, local CI targets, and the pull-request process
+- **License**: Apache 2.0, see [LICENSE](LICENSE)
 
 ## Support
 
